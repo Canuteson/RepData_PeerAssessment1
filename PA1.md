@@ -1,37 +1,61 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
-```{r loaddata, echo=TRUE}
+
+```r
 unzip("activity.zip")
 step_data <- read.csv("activity.csv")
 ```
 
 
 ## What is mean total number of steps taken per day?
-```{r meansteps, echo=TRUE}
+
+```r
 steps_per_day <- aggregate(step_data$steps~step_data$date, FUN=sum)
 hist(steps_per_day[,2], main="Frequency of Steps per day", xlab="Steps Per Day")
+```
+
+![](PA1_files/figure-html/meansteps-1.png) 
+
+```r
 mean(steps_per_day[,2])
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(steps_per_day[,2])
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
 
-```{r dailyactivitypattern, echo=TRUE}
+
+```r
 interval_steps <- aggregate(step_data$steps ~ step_data$interval, FUN=mean)
 plot(interval_steps[,1], interval_steps[,2], main="Average Steps by Interval", xlab = "Interval", 
      ylab = "Average Steps", type="l")
 ```
 
+![](PA1_files/figure-html/dailyactivitypattern-1.png) 
+
 ## Imputing missing values
-```{r missingvalues, echo=TRUE}
+
+```r
 sum(is.na(step_data$steps))
+```
+
+```
+## [1] 2304
+```
+
+```r
 filled_data <- step_data
 for (i in 1:nrow(interval_steps)){
     filled_data$steps[is.na(filled_data$steps) & 
@@ -40,12 +64,29 @@ for (i in 1:nrow(interval_steps)){
 
 complete_steps_per_day <- aggregate(filled_data$steps~filled_data$date, FUN=sum)
 hist(complete_steps_per_day[,2], main="Frequency of Steps per Day(Filled dataset)", xlab="Steps Per Day")
+```
+
+![](PA1_files/figure-html/missingvalues-1.png) 
+
+```r
 mean(complete_steps_per_day[,2])
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(complete_steps_per_day[,2])
 ```
 
+```
+## [1] 10766.19
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r weekdayactivitypattern, echo=TRUE}
+
+```r
 weekend <- c("Saturday", "Sunday")
 weekdays <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 is_weekend <- function(dayofweek) {
@@ -70,4 +111,6 @@ g = ggplot(weekday_steps, aes(interval, steps, group = 1)) +
     labs(x = "Interval", y = "Average Steps", title = "Average Steps by Interval: Weekdays vs Weekends")
 print(g)
 ```
+
+![](PA1_files/figure-html/weekdayactivitypattern-1.png) 
 
